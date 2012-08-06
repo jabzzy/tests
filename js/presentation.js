@@ -10,7 +10,8 @@
             navPrevHtml: '&larr;',
             navNextClass: 'nav-next',
             navPrevClass: 'nav-prev',
-            useMouseScrollNav: true
+            useMouseScrollNav: true,
+            hiddenClass: 'hidden'
         };
 
         if (options) {
@@ -35,6 +36,10 @@
                 33, // page up
                 83, // 's'
                 65 // 'a'
+            ],
+            fullscreen: [
+                13, // enter
+                70 // f
             ]
         };
 
@@ -43,38 +48,49 @@
 
             var $current = $items.filter(settings.currentItemSelector);
 
-            $current.removeClass(settings.currentItemClass).hide();
+            $current.removeClass(settings.currentItemClass).addClass(settings.hiddenClass);
 
             if (direction === 'backward') {
 
                 if ($items.index($current) === 0) { // first item
-                    $items.last().addClass(settings.currentItemClass).show();
+                    $items.last().addClass(settings.currentItemClass).removeClass(settings.hiddenClass);
                 } else { // navigating normally
-                    $current.prev().show().addClass(settings.currentItemClass);
+                    $current.prev().removeClass(settings.hiddenClass).addClass(settings.currentItemClass);
                 }
 
             } else {
 
                 if ($items.index($current) === itemsLength - 1) { // last item
-                    $items.eq(0).addClass(settings.currentItemClass).show();
+                    $items.eq(0).addClass(settings.currentItemClass).removeClass(settings.hiddenClass);
                 } else { // navigating normally
-                    $current.next().show().addClass(settings.currentItemClass);
+                    $current.next().removeClass(settings.hiddenClass).addClass(settings.currentItemClass);
                 }
 
             }
 
         }
 
+        function _goFullScreen(self) {
+            if ('requestFullScreen' in self) {
+                self.requestFullScreen();
+            } else if ('mozRequestFullScreen' in self) {
+                self.mozRequestFullScreen();
+            } else if ('webkitRequestFullScreen' in self) {
+                self.webkitRequestFullScreen();
+            }
+        }
+
         return this.each(function () {
 
-            var $this = $(this),
+            var self = this,
+                $this = $(this),
                 $items = $this.children(settings.itemSelector),
                 itemsLength = $items.length,
                 $navNext = $('<a href="#" />').addClass(settings.navNextClass).html(settings.navNextHtml),
                 $navPrev = $('<a href="#" />').addClass(settings.navPrevClass).html(settings.navPrevHtml);
 
             // initial setup
-            $items.filter(':not(:eq(0))').hide();
+            $items.filter(':not(:eq(0))').addClass(settings.hiddenClass);
             $items.eq(0).addClass(settings.currentItemClass);
 
             // links navigation
@@ -121,6 +137,8 @@
                     } else if (settings.keyCodes.backward.indexOf(e.keyCode) !== -1) {
                         _switchItem($items, itemsLength, 'backward');
                         return false;
+                    } else if (settings.keyCodes.fullscreen.indexOf(e.keyCode) !== -1) {
+                        _goFullScreen(self);
                     }
                 }
             });

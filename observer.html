@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title></title>
+
+        <script type="text/javascript" src="js/observable.js"></script>
+    </head>
+    <body>
+
+        <script type="text/javascript">
+
+            (function(){
+
+                var objects = [],
+                    functions = [],
+                    max = 42,
+                    i = 0,
+                    j,
+                    start,
+                    dur;
+
+                for (j = 0; j < max; j++) {
+                    functions.push(function (a, b) { var sum = a + b; });
+                    objects.push(new Observable());
+                }
+
+                start = new Date().getMilliseconds();
+                console.log('attaching listeners');
+                for (i; i < max; i++) {
+                    for (j = 0; j < max; j++) {
+                        objects[i].listen('event_' + i + '_' + j, functions[j]);
+                    }
+                }
+                dur = new Date().getMilliseconds() - start;
+                console.log('listeners attached in ' + dur + 'ms');
+
+                i = 0;
+                start = new Date().getMilliseconds();
+                console.log('firing events');
+                for (i; i < max; i++) {
+                    for (j = 0; j < max; j++) {
+                        objects[i].fire('event_' + i + '_' + j, 1, 2);
+                    }
+                }
+                dur = new Date().getMilliseconds() - start;
+                console.log('events fired in ' + dur + 'ms');
+
+                i = 0;
+                start = new Date().getMilliseconds();
+                console.log('removing listeners');
+                for (i; i < max; i++) {
+                    for (j = max; j--;) {
+                        objects[i].remove('event_' + i + '_' + j, functions[j]);
+                    }
+                }
+                dur = new Date().getMilliseconds() - start;
+                console.log('listeners removed in ' + dur + 'ms');
+                
+            })();
+
+
+        </script>
+
+        
+
+    </body>
+</html>

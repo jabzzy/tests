@@ -55,11 +55,31 @@ body {
     text-align:center; 
 }
 
+.p .close {
+    display: none;
+    position:absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    line-height: 1;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 :-moz-full-screen {
     background-color: #fff;
 }
+
 :-webkit-full-screen {
     background-color: #fff;
+}
+
+:-moz-full-screen .close {
+    display: block;
+}
+
+:-webkit-full-screen .close {
+    display: block;
 }
 
 :-webkit-full-screen .p {

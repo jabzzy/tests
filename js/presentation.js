@@ -3,16 +3,18 @@
     $.fn.prsnttn = function (options) {
 
         var settings = {
-            itemSelector: '.item',
-            currentItemSelector: '.current-item',
-            useNavLinks: true,
-            navNextHtml: '&rarr;',
-            navPrevHtml: '&larr;',
-            navNextClass: 'nav-next',
-            navPrevClass: 'nav-prev',
-            useMouseScrollNav: true,
-            hiddenClass: 'hidden'
-        };
+                itemSelector: '.item',
+                currentItemSelector: '.current-item',
+                closeSelector: '.close',
+                useNavLinks: true,
+                navNextHtml: '&rarr;',
+                navPrevHtml: '&larr;',
+                navNextClass: 'nav-next',
+                navPrevClass: 'nav-prev',
+                useMouseScrollNav: true,
+                hiddenClass: 'hidden'
+            },
+            DOMDocument = document;
 
         if (options) {
             $.extend(settings, options);
@@ -80,6 +82,16 @@
             }
         }
 
+        function _cancelFullScreen() {
+            if ('cancelFullScreen' in DOMDocument) {
+                DOMDocument.cancelFullScreen();
+            } else if ('mozCancelFullScreen' in DOMDocument) {
+                DOMDocument.mozCancelFullScreen();
+            } else if ('webkitCancelFullScreen' in DOMDocument) {
+                DOMDocument.webkitCancelFullScreen();
+            }
+        }
+
         return this.each(function () {
 
             var self = this,
@@ -114,7 +126,7 @@
             // mouse scrolling navigation
             if (settings.useMouseScrollNav) {
 
-                $(document).on('DOMMouseScroll mousewheel', function (e) {
+                $(DOMDocument).on('DOMMouseScroll mousewheel', function (e) {
                     e.preventDefault();
                     var evt = e.originalEvent;
 
@@ -141,6 +153,10 @@
                         _goFullScreen(self);
                     }
                 }
+            });
+
+            $(settings.closeSelector).click(function () {
+                _cancelFullScreen();
             });
 
         });
